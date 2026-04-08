@@ -240,7 +240,7 @@ def main():
     # Optional arguments
     parser.add_argument('-o', '--output', help='Output file path (default: ascii_art.txt)', default='ascii_art.txt')
     parser.add_argument('-w', '--width', type=int, help='Width of ASCII art in characters (default: 100)', default=100)
-    parser.add_argument('-h', '--height', type=int, help='Height of ASCII art in characters (auto if not specified)')
+    parser.add_argument('-H', '--height', type=int, help='Height of ASCII art in characters (auto if not specified)')
     parser.add_argument('-c', '--char-set', choices=['basic', 'standard', 'blocks', 'custom'],
                        help='Character set to use (default: standard)', default='standard')
     parser.add_argument('--contrast', type=float, help='Contrast adjustment (default: 1.0)', default=1.0)
