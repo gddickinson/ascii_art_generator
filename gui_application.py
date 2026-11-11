@@ -11,8 +11,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 from PIL import Image, ImageTk
 
-from ascii_art_generator import ASCIIArtGenerator
-from image_processor import ImageProcessor
+import ascii_pipeline
 import gui_settings
 
 
@@ -36,7 +35,6 @@ class ASCIIArtApp(tk.Tk):
         self.input_image_path = None
         self.output_path = None
         self.ascii_result = None
-        self.processor = ImageProcessor()
         self.current_preview = None
 
         # Build UI
@@ -269,48 +267,30 @@ class ASCIIArtApp(tk.Tk):
         self.status_var.set("Error generating ASCII art.")
         self._set_busy_cursor(False)
 
+    def _current_settings(self):
+        """The settings panel's values as an ascii_pipeline settings dict."""
+        return {
+            "char_set": self.char_set_var.get(), "custom_chars": self.custom_chars_var.get(),
+            "invert": self.invert_var.get(), "dither": self.dither_var.get(),
+            "contrast": self.contrast_var.get(), "brightness": self.brightness_var.get(),
+            "sharpness": self.sharpness_var.get(), "hist_equal": self.hist_equal_var.get(),
+            "enhance_edges": self.enhance_edges_var.get(), "edge_mode": self.edge_mode_var.get(),
+            "unsharp_mask": self.unsharp_mask_var.get(), "unsharp_radius": self.unsharp_radius_var.get(),
+            "unsharp_amount": self.unsharp_amount_var.get(), "adaptive_thresh": self.adaptive_thresh_var.get(),
+            "thresh_block": self.thresh_block_var.get(), "thresh_c": self.thresh_c_var.get(),
+        }
+
     def _generate_ascii_art(self, width, height):
-        """Generate ASCII art with the specified dimensions."""
+        """Generate ASCII art with the specified dimensions (height None = keep the aspect ratio).
+
+        The conversion itself is ascii_pipeline.convert, shared with the web app.
+        """
         if not self.input_image_path:
             raise ValueError("No image loaded")
 
-        self.processor = ImageProcessor()
-        self.processor.load(self.input_image_path)
-        self.processor.resize(width, height)
-
-        if self.sharpness_var.get() != 1.0:
-            self.processor.adjust_sharpness(self.sharpness_var.get())
-        if self.contrast_var.get() != 1.0:
-            self.processor.adjust_contrast(self.contrast_var.get())
-        if self.brightness_var.get() != 1.0:
-            self.processor.adjust_brightness(self.brightness_var.get())
-        if self.hist_equal_var.get():
-            self.processor.apply_histogram_equalization()
-        if self.enhance_edges_var.get():
-            self.processor.detect_edges(self.edge_mode_var.get())
-        if self.unsharp_mask_var.get():
-            self.processor.apply_unsharp_mask(
-                radius=self.unsharp_radius_var.get(), amount=self.unsharp_amount_var.get()
-            )
-        if self.adaptive_thresh_var.get():
-            self.processor.apply_adaptive_thresholding(
-                block_size=self.thresh_block_var.get(), c=self.thresh_c_var.get()
-            )
-
-        processed_img = self.processor.get_processed_image()
-
-        char_set = self.char_set_var.get()
-        if char_set == "custom":
-            ASCIIArtGenerator.CHAR_SETS['custom'] = self.custom_chars_var.get()
-
-        generator = ASCIIArtGenerator(
-            char_set=char_set, width=width, height=height,
-            contrast=1.0, brightness=1.0,
-            invert=self.invert_var.get(), dither=self.dither_var.get(),
-        )
-
-        ascii_image = generator._map_pixels_to_ascii(processed_img)
-        result = '\n'.join([''.join(row) for row in ascii_image])
+        settings = ASCIIArtApp._current_settings(self)
+        settings.update(width=width, height=height)
+        result = ascii_pipeline.convert_file(self.input_image_path, settings)
         self.ascii_result = result
 
         self.ascii_text.config(state=tk.NORMAL)
