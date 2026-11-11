@@ -19,10 +19,12 @@ from image_processor import ImageProcessor
 
 EDGE_MODES = ("standard", "sobel", "canny")
 
-# Defaults (the GUI's "Reset to Defaults" values). height None = automatic from the aspect ratio.
+# Defaults (the GUI's "Reset to Defaults" values). height None = automatic from the aspect ratio. custom_chars is
+# used when char_set is "custom"; its default is the built-in "custom" set, so {"char_set": "custom"} gives the same
+# result as the command line's --char-set custom (the GUI always passes the text of its Custom Characters field).
 DEFAULTS = {
     "width": 100, "height": None, "char_set": "standard",
-    "custom_chars": ASCIIArtGenerator.CHAR_SETS["standard"],
+    "custom_chars": ASCIIArtGenerator.CHAR_SETS["custom"],
     "invert": False, "dither": False,
     "contrast": 1.0, "brightness": 1.0, "sharpness": 1.0,
     "hist_equal": False, "enhance_edges": False, "edge_mode": "standard",

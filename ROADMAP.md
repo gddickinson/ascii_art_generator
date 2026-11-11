@@ -19,12 +19,12 @@ A functional image-to-ASCII converter with three modules: `ascii_art_generator.p
 - [ ] Implement video-to-ASCII conversion (MP4/AVI input)
 - [ ] Add drag-and-drop support in `gui_application.py`
 - [ ] Add undo/redo for parameter changes in the GUI
-- [ ] Add a "copy to clipboard" button for quick ASCII sharing
+- [ ] Add a "copy to clipboard" button for quick ASCII sharing (done in the web app)
 - [ ] Support Unicode block characters for higher-resolution output
 
 ## Long-term Vision
 - [ ] Publish to PyPI as an installable package with `pyproject.toml`
-- [ ] Build a web version using Flask/FastAPI backend with the same core engine
+- [x] Build a web version using Flask/FastAPI backend with the same core engine (`web/`, plus a static GitHub Pages site)
 - [ ] Add ML-based edge detection in `image_processor.py` for better detail preservation
 - [ ] Create VS Code extension for inline ASCII art generation
 - [ ] Add style transfer preprocessing -- convert photos to line art before ASCII conversion
@@ -32,7 +32,7 @@ A functional image-to-ASCII converter with three modules: `ascii_art_generator.p
 ## Technical Debt
 - [x] `usage_examples.py` should be moved to an `examples/` directory
 - [x] `gui_application.py` likely exceeds 500 lines -- split into separate widget modules
-- [ ] No separation between presentation and logic in the GUI -- extract a controller layer
+- [ ] No separation between presentation and logic in the GUI -- extract a controller layer (conversion now in `ascii_pipeline.py`)
 - [ ] `image_processor.py` and `ascii_art_generator.py` have overlapping image loading code -- deduplicate
 - [ ] Add logging instead of print statements for debugging
 - [x] No `.gitignore` to exclude `__pycache__/` and generated output files

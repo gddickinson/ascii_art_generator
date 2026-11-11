@@ -1,0 +1,19 @@
+/* Project accents (phosphor green / amber / sky) and page styles for the ASCII Art Generator. Shared theme: style.css. */
+:root { --accent:#7dff6a; --accent2:#ffb000; --accent3:#5ad1ff; --glow:rgba(125,255,106,.13); }
+pre.art { white-space:pre; overflow:auto; line-height:1.0; font-family:ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  font-size:10px; color:#d8ffe0; background:#000; max-height:72vh; margin:10px 0; letter-spacing:0; }
+pre.art.mini { font-size:6px; max-height:none; overflow:hidden; border-color:#1a2340; }
+.hero-art pre.art { width:fit-content; max-width:100%; margin:10px auto; font-size:11px; text-align:left; color:var(--accent); text-shadow:0 0 6px var(--glow); max-height:none; }
+.conv { grid-template-columns:320px minmax(0, 1fr); }
+.ctls { margin-top:14px; } .ctls h3:first-child { margin-top:0; }
+.ctls .seg { margin:2px 0 6px; } .ctls .seg button { padding:6px 12px; }
+.ctls .sub { padding-left:14px; border-left:2px solid var(--line); margin-left:4px; }
+label.chk { color:var(--ink); font-size:14px; margin:8px 0 2px; cursor:pointer; }
+label.chk input { margin-right:6px; vertical-align:middle; }
+input:disabled, button:disabled { opacity:.45; }
+.src.over { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 0 22px var(--glow); }
+.src .row { align-items:flex-end; } .src p { margin:8px 0 0; }
+.out-head { align-items:center; flex-wrap:nowrap; } .out-head p { margin:0; }
+#o-thumb { flex:0 0 auto; min-width:0; max-width:120px; max-height:70px; border:1px solid var(--line); border-radius:3px; }
+a.card.gal { overflow:hidden; } a.card.gal pre { margin-bottom:0; }
+@media (max-width:760px) { .conv { grid-template-columns:minmax(0, 1fr); } .conv #outp { order:-1; } .hero-art pre.art { font-size:5px; } #o-thumb { display:none; } }

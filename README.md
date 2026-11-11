@@ -125,6 +125,30 @@ python gui_application.py
 4. Click "Generate Full" for the final result
 5. Save your ASCII art using File > Save ASCII Art
 
+## Web app and GitHub Pages site
+
+Convert images in the browser: **https://gddickinson.github.io/ascii_art_generator/** (published from `main` by
+`.github/workflows/pages.yml` once GitHub Pages is enabled with "GitHub Actions" as the source). Your image is read and
+converted on your own device and never uploaded. Every option of the desktop app is there (character sets including
+your own, width/height, contrast, brightness, sharpness, histogram equalization, standard/Sobel/Canny edges, unsharp
+mask, adaptive thresholding, invert, dithering), with copy and download as text, HTML or PNG, and a gallery of styles.
+
+The browser engine (`web/static/ascii_engine.js`) is a JavaScript port of the Python pipeline (`ascii_pipeline.py`,
+the same steps the GUI runs); `tests/test_web.py` runs a node test requiring identical text on 76 test conversions.
+
+Run it locally, where the Python pipeline can also do the conversion (with a JS-vs-Python cross-check):
+
+```bash
+pip install -r requirements-web.txt
+python run_web.py                 # http://127.0.0.1:8174
+python -m pytest -q tests         # all tests, including the web and JS engine tests
+python scripts/build_static.py    # static site in site/
+```
+
+![Home page](docs/img/home.png)
+![Converter](docs/img/convert.png)
+![Gallery](docs/img/gallery.png)
+
 ## Advanced Usage
 
 ### Image Preprocessing
@@ -262,7 +286,6 @@ Here are some potential enhancements for future versions:
 
 ### Platform Extensions
 
-- **Web Version** - Browser-based version with simplified controls
 - **Mobile App** - Android/iOS versions
 - **Editor Plugins** - Extensions for VS Code, Sublime Text, etc.
 
