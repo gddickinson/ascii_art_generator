@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 from PIL import Image, ImageTk
 
+import ascii_export
 import ascii_pipeline
 import gui_settings
 
@@ -331,14 +332,7 @@ class ASCIIArtApp(tk.Tk):
             )
             if file_path:
                 try:
-                    html_content = (
-                        "<!DOCTYPE html>\n<html>\n<head>\n"
-                        '<meta charset="UTF-8">\n<title>ASCII Art</title>\n'
-                        "<style>pre { font-family: monospace; font-size: 10px; "
-                        "line-height: 1.0; white-space: pre; }</style>\n"
-                        "</head>\n<body>\n<pre>"
-                        f"{self.ascii_result}</pre>\n</body>\n</html>"
-                    )
+                    html_content = ascii_export.to_html(self.ascii_result)
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(html_content)
                     self.status_var.set(f"ASCII art saved as HTML to: {os.path.basename(file_path)}")
@@ -352,13 +346,8 @@ class ASCIIArtApp(tk.Tk):
             )
             if file_path:
                 try:
-                    self.ascii_text.update()
-                    x = self.ascii_text.winfo_rootx()
-                    y = self.ascii_text.winfo_rooty()
-                    w = self.ascii_text.winfo_width()
-                    h = self.ascii_text.winfo_height()
-                    img = ImageTk.PhotoImage(Image.grab((x, y, x + w, y + h)))
-                    img._image.save(file_path)
+                    # Rendered from the text (black on white, like the preview), not a screen grab
+                    ascii_export.save_png(self.ascii_result, file_path, font_size=self.font_size_var.get())
                     self.status_var.set(f"ASCII art saved as image to: {os.path.basename(file_path)}")
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to save image: {e}")

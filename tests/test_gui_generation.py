@@ -89,3 +89,32 @@ def test_gui_custom_chars_do_not_change_shared_char_sets(colour_image):
     out = gui_convert(colour_image, 12, 4, char_set="custom", custom_chars=" #")
     assert set(out.replace("\n", "")) <= {" ", "#"}
     assert ASCIIArtGenerator.CHAR_SETS == before
+
+
+def _save_with_format(monkeypatch, tmp_path, fmt, text, ext):
+    out = tmp_path / ("art" + ext)
+    errors = []
+    monkeypatch.setattr(gui_application.filedialog, "asksaveasfilename", lambda **kw: str(out))
+    monkeypatch.setattr(gui_application.messagebox, "showerror", lambda *a: errors.append(a))
+    app = SimpleNamespace(ascii_result=text, output_format_var=Var(fmt), status_var=Var(""),
+                          font_size_var=Var(10))
+    app.status_var.set = lambda v: None
+    gui_application.ASCIIArtApp._save_ascii_art(app)
+    return out, errors
+
+
+def test_gui_save_html_escapes_markup_characters(monkeypatch, tmp_path):
+    """'<' and '&' are in the standard set; unescaped, '<il' started an HTML tag and hid part of the art."""
+    out, errors = _save_with_format(monkeypatch, tmp_path, "HTML", "a<il>&b\n<I", ".html")
+    assert not errors
+    page = out.read_text(encoding="utf-8")
+    assert "a&lt;il&gt;&amp;b\n&lt;I" in page and "<il>" not in page
+
+
+def test_gui_save_image_writes_png(monkeypatch, tmp_path):
+    """Saving as Image used Image.grab, which does not exist in PIL.Image, so it always failed."""
+    out, errors = _save_with_format(monkeypatch, tmp_path, "Image", "@@  ░▒\n#%:.▓█", ".png")
+    assert not errors and out.exists()
+    with Image.open(out) as img:
+        assert img.size[0] > img.size[1] > 0
+        assert len(img.convert("L").getcolors(65536)) > 2   # more than a blank picture
