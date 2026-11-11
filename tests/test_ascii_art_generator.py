@@ -142,3 +142,23 @@ class TestOptions:
         gen = ASCIIArtGenerator(width=20, dither=True, debug=False)
         result = gen.direct_convert(gradient_image)
         assert isinstance(result, str)
+
+
+class TestAutoHeight:
+    """Regression tests for the auto-calculated height."""
+
+    def test_generator_reused_for_images_of_different_shape(self):
+        """A generator converting a second image must size it from that image, not reuse the first height."""
+        gen = ASCIIArtGenerator(width=20, debug=False)
+        wide = Image.new("RGB", (100, 25), color=(200, 200, 200))   # 20 * 0.25 * 0.5 -> 2 rows
+        tall = Image.new("RGB", (50, 100), color=(200, 200, 200))   # 20 * 2.0 * 0.5 -> 20 rows
+        assert len(gen.direct_convert(wide).split('\n')) == 2
+        assert len(gen.direct_convert(tall).split('\n')) == 20
+        assert gen.height is None  # still in auto mode
+
+    def test_very_wide_image_gets_at_least_one_row(self):
+        """int(width * aspect * 0.5) can be 0 for a very wide image; that used to crash the resize."""
+        gen = ASCIIArtGenerator(width=20, debug=False)
+        result = gen.direct_convert(Image.new("RGB", (400, 10), color=(255, 255, 255)))
+        lines = result.split('\n')
+        assert len(lines) == 1 and len(lines[0]) == 20

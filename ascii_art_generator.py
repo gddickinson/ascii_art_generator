@@ -37,6 +37,14 @@ class ASCIIArtGenerator:
             self.debug_print(f"Warning: Character set '{char_set}' not found. Using 'standard'.")
             self.chars = self.CHAR_SETS['standard']
 
+    @staticmethod
+    def auto_height(image_width, image_height, width):
+        """Rows for `width` columns keeping the aspect ratio of an image_width x image_height image.
+
+        Multiplied by 0.5 because a character cell is about twice as tall as it is wide; at least 1 row.
+        """
+        return max(1, int(width * (image_height / image_width) * 0.5))
+
     def debug_print(self, message):
         """Print debug messages if debug mode is enabled."""
         if self.debug_mode:
@@ -45,16 +53,16 @@ class ASCIIArtGenerator:
     def _preprocess_image(self, image):
         """Preprocess the image with sizing and adjustments."""
         try:
-            # Calculate height to maintain aspect ratio if not specified
-            if self.height is None:
-                aspect_ratio = image.height / image.width
-                # Multiply by 0.5 to account for terminal character height/width ratio
-                self.height = int(self.width * aspect_ratio * 0.5)
-                self.debug_print(f"Auto-calculated height: {self.height}")
+            # Calculate height to maintain aspect ratio if not specified. Kept local (not stored on
+            # self) so a generator reused for another image sizes that image from its own aspect ratio.
+            height = self.height
+            if height is None:
+                height = self.auto_height(image.width, image.height, self.width)
+                self.debug_print(f"Auto-calculated height: {height}")
 
             # Resize image
-            self.debug_print(f"Resizing image from {image.size} to ({self.width}, {self.height})")
-            image = image.resize((self.width, self.height), Image.LANCZOS)
+            self.debug_print(f"Resizing image from {image.size} to ({self.width}, {height})")
+            image = image.resize((self.width, height), Image.LANCZOS)
 
             # Convert to grayscale
             self.debug_print(f"Converting image from {image.mode} to grayscale")
