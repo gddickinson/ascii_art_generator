@@ -22,20 +22,20 @@ A powerful Python application for converting images to high-quality ASCII art wi
 
 - Python 3.6+
 - Required libraries:
-  - PIL (Pillow)
-  - Tkinter (included with Python)
+  - PIL (Pillow), numpy, OpenCV (`opencv-python`)
+  - Tkinter (included with most Python installers) for the GUI
 
 ### Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/gddickinson/ascii-art-generator.git
-cd ascii-art-generator
+git clone https://github.com/gddickinson/ascii_art_generator.git
+cd ascii_art_generator
 ```
 
-2. Install required dependencies:
+2. Install required dependencies (Pillow, numpy, OpenCV):
 ```bash
-pip install pillow
+pip install -r requirements.txt
 ```
 
 3. Run the application:
@@ -82,10 +82,10 @@ python ascii_art_generator.py input_image.jpg -o output.txt -w 100 --contrast 1.
 Available options:
 
 ```
-usage: ascii_art_generator.py [-h] [-o OUTPUT] [-w WIDTH] [-h HEIGHT] 
+usage: ascii_art_generator.py [-h] [-o OUTPUT] [-w WIDTH] [-H HEIGHT] 
                               [-c {basic,standard,blocks,custom}] 
                               [--contrast CONTRAST] [--brightness BRIGHTNESS] 
-                              [--invert] [--dither] [--preview] input
+                              [--invert] [--dither] [--preview] [--debug] input
 
 Convert images to ASCII art
 
@@ -98,7 +98,7 @@ optional arguments:
                         Output file path (default: ascii_art.txt)
   -w WIDTH, --width WIDTH
                         Width of ASCII art in characters (default: 100)
-  -h HEIGHT, --height HEIGHT
+  -H HEIGHT, --height HEIGHT
                         Height of ASCII art in characters (auto if not specified)
   -c {basic,standard,blocks,custom}, --char-set {basic,standard,blocks,custom}
                         Character set to use (default: standard)
@@ -108,6 +108,7 @@ optional arguments:
   --invert              Invert the image
   --dither              Apply dithering for better detail
   --preview             Preview the ASCII art in console
+  --debug               Enable debug output
 ```
 
 ### Graphical User Interface
@@ -222,7 +223,9 @@ The application includes comprehensive error handling with detailed error messag
 
 - `ascii_art_generator.py` - Core conversion logic
 - `gui_application.py` - User-friendly graphical interface
-- `image_processor.py` - Image preprocessing capabilities (advanced version only)
+- `image_processor.py` - Image preprocessing (contrast, sharpness, edges, equalisation, unsharp mask, thresholding)
+- `ascii_pipeline.py` - The GUI's conversion steps without Tkinter (shared with the web app)
+- `ascii_export.py` - HTML and PNG export
 
 ## Examples
 
