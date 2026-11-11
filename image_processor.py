@@ -251,7 +251,8 @@ class ImageProcessor:
         """Apply unsharp mask filter."""
         try:
             self.debug_print(f"Applying unsharp mask with radius={radius}, amount={amount}")
-            percent = amount * 100
+            # Pillow's UnsharpMask needs an integer percentage (a float such as 150.0 raises TypeError)
+            percent = int(round(amount * 100))
             self.debug_print(f"Using percent={percent}")
             self.image = self.image.filter(ImageFilter.UnsharpMask(radius=radius, percent=percent))
             return self
